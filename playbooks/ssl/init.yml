@@ -1,0 +1,42 @@
+---
+- hosts: master
+  gather_facts: yes
+  become: yes
+  tasks:
+    - name: create /home/admin/ssl/nginx directory
+      file:
+        path: /home/admin/ssl/nginx
+        state: directory
+    - name: create /home/admin/ssl/data/certbot/conf directory
+      file:
+        path: /home/admin/ssl/data/certbot/conf
+        state: directory
+    - name: create /home/admin/ssl/data/certbot/www directory
+      file:
+        path: /home/admin/ssl/data/certbot/www
+        state: directory
+    - name: remove old nginx config
+      file:
+        path: /home/admin/ssl/nginx/app.conf
+        state: absent
+    - name: remove old docker-compose file
+      file:
+        path: /home/admin/ssl/docker-compose.yml
+        state: absent
+    - name: remove old init-letsencrypt
+      file:
+        path: /home/admin/ssl/init-letsencrypt.sh
+        state: absent
+    - name: copy new docker-compose file
+      template:
+        src: ./templates/app.conf.j2
+        dest: /home/admin/ssl/nginx/app.conf
+    - name: copy new docker-compose file
+      template:
+        src: ./templates/docker-compose.yml.j2
+        dest: /home/admin/ssl/docker-compose.yml
+    - name: copy new init-letsencrypt
+      template:
+        src: ./templates/init-letsencrypt.sh.j2
+        dest: /home/admin/ssl/init-letsencrypt.sh
+        mode: u=rwx,g=r,o=r
