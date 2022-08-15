@@ -1,0 +1,178 @@
+---
+version: '3.8'
+
+# sudo docker stack deploy -c monitoring-stack.yml monitoring
+# sudo docker stack rm monitoring
+# manager hostname: ip-172-31-27-212
+# worker1 hostname: ip-172-31-21-65
+# worker2 hostname: ip-172-31-22-172
+
+volumes:
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
+networks:
+  monitoring:
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - /etc/prometheus:/etc/prometheus
+      - prometheus-data:/prometheus
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    networks:
+      - monitoring
+
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    restart: unless-stopped
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    networks:
+      - monitoring
+
+
+
+  ################################################################
+  # The promethes cadvisor 
+  # For each node a separte service need to be added 
+  ################################################################
+  # START cadvisor.....    
+  manager_cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.39.3
+    container_name: manager_cadvisor
+    ports:
+      - "8080:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == ip-172-31-27-212
+    devices:
+      - /dev/kmsg
+    networks:
+      - monitoring
+
+
+  worker1_cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.39.3
+    container_name: worker1_cadvisor
+    ports:
+      - "8081:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == ip-172-31-21-65
+    devices:
+      - /dev/kmsg
+    networks:
+      - monitoring
+
+
+  worker2_cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.39.3
+    container_name: worker2_cadvisor
+    ports:
+      - "8082:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == ip-172-31-22-172
+    devices:
+      - /dev/kmsg
+    networks:
+      - monitoring
+
+  ################################################################
+  # The promethes node-exporter 
+  # For each node a separte service need to be added 
+  ################################################################
+  # START NODE-EXPORTERS.....    
+  manager_node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: manager_node_exporter
+    command:
+      - '--path.rootfs=/host'
+    network_mode: host
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - '/:/host:ro,rslave'
+    deploy:
+      placement:
+        constraints:
+         - node.hostname == ip-172-31-27-212
+    networks:
+      - monitoring
+
+
+  worker1_node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: worker1_node_exporter
+    command:
+      - '--path.rootfs=/host'
+    network_mode: host
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - '/:/host:ro,rslave'
+    deploy:
+      placement:
+        constraints:
+         - node.hostname == ip-172-31-21-65
+    networks:
+      - monitoring
+
+
+  worker2_node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: worker2_node_exporter
+    command:
+      - '--path.rootfs=/host'
+    network_mode: host
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - '/:/host:ro,rslave'
+    deploy:
+      placement:
+        constraints:
+         - node.hostname == ip-172-31-22-172
+    networks:
+      - monitoring
