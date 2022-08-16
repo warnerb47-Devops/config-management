@@ -15,14 +15,12 @@ pipelines:
             # - ansible-playbook -i config/hosts --private-key='/opt/atlassian/pipelines/agent/ssh/id_rsa' playbooks/compose.yml
       - step:
           name: 'setup swarm cluster'
+          trigger: manual
           script:
             - echo 'setup swarm cluster'
             # - ansible-playbook -i config/hosts --private-key='/opt/atlassian/pipelines/agent/ssh/id_rsa' playbooks/cluster.yml
-      - step:
-          name: 'Deploy portainer'
-          script:
-            - echo 'Deploy portainer'
-            # - ansible-playbook -i config/hosts --private-key='/opt/atlassian/pipelines/agent/ssh/id_rsa' playbooks/portainer.yml
+
+    - parallel:
       - step:
           name: 'setup aws credential'
           script:
@@ -33,10 +31,18 @@ pipelines:
           script:
             - echo 'setup aws credential'
             # - ansible-playbook -i config/hosts --private-key='/opt/atlassian/pipelines/agent/ssh/id_rsa' playbooks/ssl/ssl.yml
+
+    - parallel:
       - step:
-          name: 'setup prometheus-grafana'
+          name: 'Deploy portainer'
           script:
-            - echo 'setup prometheus-grafana'
+            - echo 'Deploy portainer'
+            # - ansible-playbook -i config/hosts --private-key='/opt/atlassian/pipelines/agent/ssh/id_rsa' playbooks/portainer.yml
+
+      - step:
+          name: 'Deploy prometheus-grafana'
+          script:
+            - echo 'Deploy prometheus-grafana'
             # - ansible-playbook -i config/hosts --private-key='/opt/atlassian/pipelines/agent/ssh/id_rsa' playbooks/prometheus/prometheus.yml
 
     # The following deployment steps will be executed for each pipeline run. To configure your steps and conditionally deploy see https://support.atlassian.com/bitbucket-cloud/docs/configure-bitbucket-pipelinesyml/
