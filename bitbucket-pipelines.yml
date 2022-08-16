@@ -5,43 +5,36 @@ pipelines:
     - parallel:
       - step:
           name: 'Install Docker'
-          trigger: 'manual'
           script:
             - echo 'Install Docker'
             # - ansible-playbook -i config/hosts --private-key='/opt/atlassian/pipelines/agent/ssh/id_rsa' playbooks/docker.yml
       - step:
           name: 'Install Docker-compose'
-          trigger: 'manual'
           script:
             - echo 'Install Docker-compose'
             # - ansible-playbook -i config/hosts --private-key='/opt/atlassian/pipelines/agent/ssh/id_rsa' playbooks/compose.yml
       - step:
           name: 'setup swarm cluster'
-          trigger: 'manual'
           script:
             - echo 'setup swarm cluster'
             # - ansible-playbook -i config/hosts --private-key='/opt/atlassian/pipelines/agent/ssh/id_rsa' playbooks/cluster.yml
       - step:
           name: 'Deploy portainer'
-          trigger: 'manual'
           script:
             - echo 'Deploy portainer'
             # - ansible-playbook -i config/hosts --private-key='/opt/atlassian/pipelines/agent/ssh/id_rsa' playbooks/portainer.yml
       - step:
           name: 'setup aws credential'
-          trigger: 'manual'
           script:
             - echo 'setup aws credential'
             # - ansible-playbook -i config/hosts --private-key='/opt/atlassian/pipelines/agent/ssh/id_rsa' playbooks/aws.yml
       - step:
           name: 'setup ssl'
-          trigger: 'manual'
           script:
             - echo 'setup aws credential'
             # - ansible-playbook -i config/hosts --private-key='/opt/atlassian/pipelines/agent/ssh/id_rsa' playbooks/ssl/ssl.yml
       - step:
           name: 'setup prometheus-grafana'
-          trigger: 'manual'
           script:
             - echo 'setup prometheus-grafana'
             # - ansible-playbook -i config/hosts --private-key='/opt/atlassian/pipelines/agent/ssh/id_rsa' playbooks/prometheus/prometheus.yml
@@ -50,5 +43,6 @@ pipelines:
     - step:
         name: 'Deployment to Staging'
         deployment: staging
+        trigger: manual
         script:
           - echo "Your deployment to staging script goes here..."
