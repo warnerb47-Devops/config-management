@@ -16,10 +16,12 @@ pipelines:
       - step:
           name: 'setup swarm cluster'
           script:
-            - export setup_cluster=true
+            - export setup_cluster=false
             - |
               if [ "$setup_cluster" = true ]; then
                 echo 'setup swarm cluster'
+              else
+                echo 'setup swarm cluster not needed'
               fi
             # - ansible-playbook -i config/hosts --private-key='/opt/atlassian/pipelines/agent/ssh/id_rsa' playbooks/cluster.yml
 
@@ -32,7 +34,13 @@ pipelines:
       - step:
           name: 'setup ssl'
           script:
-            - echo 'setup aws credential'
+            - export setup_ssl=false
+            - |
+              if [ "$setup_ssl" = true ]; then
+                echo 'setup aws credential'
+              else
+                echo 'setup aws credential not needed'
+              fi
             # - ansible-playbook -i config/hosts --private-key='/opt/atlassian/pipelines/agent/ssh/id_rsa' playbooks/ssl/ssl.yml
 
     - parallel:
