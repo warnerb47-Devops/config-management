@@ -3,7 +3,7 @@
 - import_playbook: cluster.yml
 - import_playbook: portainer.yml
 - import_playbook: aws.yml
-- import_playbook: ./ssl/ssl.yml
 - import_playbook: compose.yml
+- import_playbook: ./ssl/ssl.yml
 - import_playbook: ./prometheus/prometheus.yml
 # - import_playbook: ./elk/elk.yml

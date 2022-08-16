@@ -1,25 +1,50 @@
-# This is an example Starter pipeline configuration
-# Use a skeleton to build, test and deploy using manual and parallel steps
-# -----
-# You can specify a custom docker image from Docker Hub as your build environment.
-
-image: atlassian/default-image:3
+image: williamyeh/ansible:debian9
 
 pipelines:
   default:
     - parallel:
       - step:
-          name: 'Build and Test'
+          name: 'Install Docker'
+          trigger: 'manual'
           script:
-            - echo "Your build and test goes here..."
+            - echo 'Install Docker'
+            # - ansible-playbook -i config/hosts --private-key='/opt/atlassian/pipelines/agent/ssh/id_rsa' playbooks/docker.yml
       - step:
-          name: 'Lint'
+          name: 'Install Docker-compose'
+          trigger: 'manual'
           script:
-            - echo "Your linting goes here..."
+            - echo 'Install Docker-compose'
+            # - ansible-playbook -i config/hosts --private-key='/opt/atlassian/pipelines/agent/ssh/id_rsa' playbooks/compose.yml
       - step:
-          name: 'Security scan'
+          name: 'setup swarm cluster'
+          trigger: 'manual'
           script:
-            - echo "Your security scan goes here..."
+            - echo 'setup swarm cluster'
+            # - ansible-playbook -i config/hosts --private-key='/opt/atlassian/pipelines/agent/ssh/id_rsa' playbooks/cluster.yml
+      - step:
+          name: 'Deploy portainer'
+          trigger: 'manual'
+          script:
+            - echo 'Deploy portainer'
+            # - ansible-playbook -i config/hosts --private-key='/opt/atlassian/pipelines/agent/ssh/id_rsa' playbooks/portainer.yml
+      - step:
+          name: 'setup aws credential'
+          trigger: 'manual'
+          script:
+            - echo 'setup aws credential'
+            # - ansible-playbook -i config/hosts --private-key='/opt/atlassian/pipelines/agent/ssh/id_rsa' playbooks/aws.yml
+      - step:
+          name: 'setup ssl'
+          trigger: 'manual'
+          script:
+            - echo 'setup aws credential'
+            # - ansible-playbook -i config/hosts --private-key='/opt/atlassian/pipelines/agent/ssh/id_rsa' playbooks/ssl/ssl.yml
+      - step:
+          name: 'setup prometheus-grafana'
+          trigger: 'manual'
+          script:
+            - echo 'setup prometheus-grafana'
+            # - ansible-playbook -i config/hosts --private-key='/opt/atlassian/pipelines/agent/ssh/id_rsa' playbooks/prometheus/prometheus.yml
 
     # The following deployment steps will be executed for each pipeline run. To configure your steps and conditionally deploy see https://support.atlassian.com/bitbucket-cloud/docs/configure-bitbucket-pipelinesyml/
     - step:
@@ -27,9 +52,3 @@ pipelines:
         deployment: staging
         script:
           - echo "Your deployment to staging script goes here..."
-    - step:
-        name: 'Deployment to Production'
-        deployment: production
-        trigger: 'manual'
-        script:
-          - echo "Your deployment to production script goes here..."
