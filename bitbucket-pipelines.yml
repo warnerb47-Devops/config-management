@@ -3,12 +3,6 @@ image: williamyeh/ansible:debian9
 pipelines:
   default:
     - parallel:
-      - variables:
-        - name: setup_cluster
-          default: false  
-          allowed-values:
-            - true
-            - false
       - step:
           name: 'Install Docker'
           script:
