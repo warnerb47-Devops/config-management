@@ -15,9 +15,12 @@ pipelines:
             # - ansible-playbook -i config/hosts --private-key='/opt/atlassian/pipelines/agent/ssh/id_rsa' playbooks/compose.yml
       - step:
           name: 'setup swarm cluster'
-          trigger: manual
           script:
-            - echo 'setup swarm cluster'
+            - export setup_cluster=true
+            - |
+              if [ "$setup_cluster" = true ]; then
+                echo 'setup swarm cluster'
+              fi
             # - ansible-playbook -i config/hosts --private-key='/opt/atlassian/pipelines/agent/ssh/id_rsa' playbooks/cluster.yml
 
     - parallel:
@@ -45,10 +48,3 @@ pipelines:
             - echo 'Deploy prometheus-grafana'
             # - ansible-playbook -i config/hosts --private-key='/opt/atlassian/pipelines/agent/ssh/id_rsa' playbooks/prometheus/prometheus.yml
 
-    # The following deployment steps will be executed for each pipeline run. To configure your steps and conditionally deploy see https://support.atlassian.com/bitbucket-cloud/docs/configure-bitbucket-pipelinesyml/
-    - step:
-        name: 'Deployment to Staging'
-        deployment: staging
-        trigger: manual
-        script:
-          - echo "Your deployment to staging script goes here..."
