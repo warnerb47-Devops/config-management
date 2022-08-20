@@ -1,0 +1,10 @@
+version: '3.9'
+services:
+  metabase:
+    image: metabase/metabase:latest
+    container_name: metabase
+    ports:
+      - 3000:3000
+
+# docker-compose -f metabase.yml up -d
+# docker exec -ti metabase bash
