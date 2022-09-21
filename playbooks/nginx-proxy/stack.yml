@@ -1,14 +1,10 @@
-version: '3'
-
-# sudo docker network create npm
-# sudo docker-compose -f /etc/nginx-proxy/nginx-proxy.yml -p npm up -d
+version: '3.8'
 
 services:
   nginx:
     image: 'jc21/nginx-proxy-manager:latest'
     container_name: nginx
     ports:
-      - '80:80'
       - '81:81'
       - '443:443'
     restart: unless-stopped
@@ -23,6 +19,10 @@ services:
       - /path/to/letsencrypt:/etc/letsencrypt
     depends_on:
       - db
+    deploy:
+      placement:
+        constraints:
+         - node.role == master
   db:
     image: 'jc21/mariadb-aria:latest'
     container_name: nginx-db
@@ -34,8 +34,7 @@ services:
       MYSQL_PASSWORD: 'npm'
     volumes:
       - /path/to/mysql:/var/lib/mysql
-
-networks:
-  default:
-    external:
-      name: npm
+    deploy:
+      placement:
+        constraints:
+         - node.role == master
