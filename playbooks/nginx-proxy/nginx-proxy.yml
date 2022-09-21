@@ -1,0 +1,17 @@
+---
+- hosts: master
+  gather_facts: yes
+  become: yes
+  tasks:
+    - name: create /etc/nginx-proxy directory
+      file:
+        path: /etc/nginx-proxy
+        state: directory
+    - name: remove nginx-proxy old config
+      file:
+        path: '/etc/nginx-proxy/nginx-proxy.yml'
+        state: absent
+    - name: copy new nginx-proxy config
+      template:
+        src: ./stack.yml.j2
+        dest: /etc/nginx-proxy/nginx-proxy.yml
