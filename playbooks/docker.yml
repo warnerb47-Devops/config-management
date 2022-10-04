@@ -28,3 +28,6 @@
        name: docker-ce
        state: present
        update_cache: true
+
+   - name: Avaible for no root user
+     shell: usermod -aG docker $USER

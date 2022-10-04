@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: "{{ variable_host | default('all') }}"
   gather_facts: yes
   become: yes
   tasks:
@@ -13,7 +13,9 @@
         dest: /opt/
         remote_src: yes
     - name: Install aws cli
-      command: /opt/aws/install
+      command: ./install
+      args:
+        chdir: /opt/aws/
       run_once: true
     - name: set /var/run/docker.sock permission to 666
       file:
@@ -21,5 +23,5 @@
         mode: '0666'
     - name: copy aws credentials
       copy:
-        src: /root/.aws
-        dest: /home/admin/
+        src: '/{{ansible_user}}/.aws'
+        dest: '/home/{{ansible_user}}/'
