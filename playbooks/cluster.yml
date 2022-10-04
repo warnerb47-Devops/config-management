@@ -16,14 +16,14 @@
         advertise_addr: '{{ansible_host}}'
         state: present
       register: swarm_init
-      when: "inventory_hostname == groups['masters'][0]"
+      when: "inventory_hostname == groups['master_group'][0]"
     - name: Get the worker join-token.
       shell: docker swarm join-token -q worker
       changed_when: false
       register: docker_worker_token
-      delegate_to: "{{ groups['masters'][0] }}"
+      delegate_to: "{{ groups['master_group'][0] }}"
       delegate_facts: true
-      when: "inventory_hostname in groups['workers']"
+      when: "inventory_hostname in groups['worker_group']"
     - name: Add worker node
       docker_swarm:
         state: join
@@ -31,5 +31,5 @@
         join_token: '{{docker_worker_token.stdout}}'
         remote_addrs: ['{{master_ip}}:{{docker_swarm_port}}']
       register: swarm_add
-      when: "inventory_hostname in groups['workers']"
+      when: "inventory_hostname in groups['worker_group']"
 
