@@ -22,7 +22,7 @@ services:
     deploy:
       placement:
         constraints:
-         - node.role == master
+         - node.role == manager
   db:
     image: 'jc21/mariadb-aria:latest'
     container_name: nginx-db
@@ -37,7 +37,7 @@ services:
     deploy:
       placement:
         constraints:
-         - node.role == master
+         - node.role == manager
 
 volumes:
   nginx-data:
