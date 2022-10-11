@@ -19,10 +19,10 @@ services:
       - /path/to/letsencrypt:/etc/letsencrypt
     depends_on:
       - db
-    deploy:
-      placement:
-        constraints:
-         - node.role == master
+    # deploy:
+    #   placement:
+    #     constraints:
+    #      - node.role == master
   db:
     image: 'jc21/mariadb-aria:latest'
     container_name: nginx-db
@@ -34,7 +34,7 @@ services:
       MYSQL_PASSWORD: 'npm'
     volumes:
       - /path/to/mysql:/var/lib/mysql
-    deploy:
-      placement:
-        constraints:
-         - node.role == master
+    # deploy:
+    #   placement:
+    #     constraints:
+    #      - node.role == master
