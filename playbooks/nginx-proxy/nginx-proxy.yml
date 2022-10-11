@@ -7,6 +7,13 @@
       file:
         path: '/opt/nginx-proxy.yml'
         state: absent
+    # - name: create volumes directories
+    #   file:
+    #     path: /etc/{{ item[0] }}/{{ item[1] }}
+    #     state: directory
+    #   with_nested:
+    #     - nginx-proxy-manager
+    #     - [ 'data', 'letsencrypt', 'mysql' ]
     - name: copy new nginx-proxy config
       template:
         src: ./stack.yml.j2
